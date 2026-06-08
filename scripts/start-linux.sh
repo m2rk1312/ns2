@@ -9,6 +9,24 @@ fail() {
   exit 1
 }
 
+CONFIG_KEYS=(
+  NS2_ROOT
+  NS2_SERVERFILES
+  NS2_CONFIG_PATH
+  NS2_LOG_DIR
+  NS2_WORKSHOP_DIR
+  SERVER_NAME
+  SERVER_PORT
+  SERVER_LIMIT
+  SERVER_SPEC_LIMIT
+  SERVER_START_MAP
+  WEB_ADMIN
+  WEB_PORT
+  WEB_USER
+  WEB_PASSWORD
+  MOD_SERVER_PORT
+)
+
 case "${1:-}" in
   "") ;;
   --print-command) PRINT=1 ;;
@@ -25,16 +43,15 @@ if [[ $# -gt 1 ]]; then
   fail "Too many arguments"
 fi
 
+unset "${CONFIG_KEYS[@]}"
+
 if [[ -f "${ROOT}/.env" ]]; then
   while IFS= read -r line || [[ -n "${line}" ]]; do
     line="${line%$'\r'}"
     [[ "${line}" =~ ^[[:space:]]*$ || "${line}" =~ ^[[:space:]]*# ]] && continue
     [[ "${line}" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]] || fail "Invalid .env line: ${line}"
     key="${line%%=*}"
-    case "${key}" in
-      NS2_ROOT|NS2_SERVERFILES|NS2_CONFIG_PATH|NS2_LOG_DIR|NS2_WORKSHOP_DIR|SERVER_NAME|SERVER_PORT|SERVER_LIMIT|SERVER_SPEC_LIMIT|SERVER_START_MAP|WEB_ADMIN|WEB_PORT|WEB_USER|WEB_PASSWORD|MOD_SERVER_PORT) ;;
-      *) fail "Unsupported .env key: ${key}" ;;
-    esac
+    [[ " ${CONFIG_KEYS[*]} " == *" ${key} "* ]] || fail "Unsupported .env key: ${key}"
     value="${line#*=}"
     if [[ "${value}" == \"*\" && "${value}" == *\" ]]; then
       value="${value:1:${#value}-2}"

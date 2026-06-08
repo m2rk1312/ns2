@@ -7,6 +7,7 @@ Natural Selection 2 dedicated-server profile. BAD Classic public mod stack + Com
 - `config/ConsistencyConfig.json` - client consistency rules.
 - `config/shine/BaseConfig.json` - Shine enabled plugins.
 - `config/shine/UserConfig.json` - admins.
+- `config/shine/plugins/NS2Panel.json` - NS2Panel token config shape.
 - `.env.example` - host values.
 - `scripts/start-linux.sh` - only runtime script.
 
@@ -52,6 +53,8 @@ sudo find . -type f -exec chmod 640 {} +
 sudo chmod 750 scripts/start-linux.sh
 sudo install -o ns2server -g ns2server -m 600 .env.example .env
 sudo install -d -o ns2server -g ns2server -m 750 config/shine/logs
+sudo chown ns2server:ns2server config/shine/plugins/NS2Panel.json
+sudo chmod 600 config/shine/plugins/NS2Panel.json
 ```
 
 Edit `.env`:
@@ -109,6 +112,14 @@ Add NS2 ID:
 
 Use `owner` or `moderator`.
 
+## NS2Panel
+
+Create token at `https://ns2panel.com/`, then edit `config/shine/plugins/NS2Panel.json`.
+
+Set `AuthToken` to token value. Keep file private.
+
+After first start, join as Shine admin, open Shine admin menu, enable NS2Panel plugin permanently.
+
 ## Required Checks
 
 Command output must contain:
@@ -124,4 +135,41 @@ Quick local check:
 
 ```bash
 ./scripts/start-linux.sh --print-command
+```
+
+## Live Addon Checks
+
+After first Linux start, prove addons loaded:
+
+```bash
+grep -iE 'workshop|mod|failed|error' /home/ns2server/ns2/logs/*.log
+```
+
+No `failed` / missing mod errors.
+
+Check public server page:
+
+```text
+https://ns2servers.pw/server/YOUR_IP:27015
+```
+
+Mod list should show 21 running mods, including:
+
+- `2856795526` NS2Panel
+- `2934445221` CBM
+
+Join server from NS2 client. If client joins without missing-mod errors, server is serving required Workshop addons.
+
+In server/client console, check:
+
+```text
+sh_listplugins
+```
+
+Shine should be loaded. Enable NS2Panel permanently in Shine menu if needed.
+
+Cycle one custom-map entry later to prove map-specific Workshop mods download:
+
+```text
+sh_changelevel ns2_docking_mmpg
 ```

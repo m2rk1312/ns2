@@ -1,0 +1,12 @@
+{
+  "AuthToken": "",
+  "PlayerConnectReport": {
+    "Enabled": true,
+    "SubmitTimeout": 5
+  },
+  "RoundEndReport": {
+    "MaxSubmitRetries": 3,
+    "SubmitTimeout": 5
+  },
+  "__Version": "1.0"
+}
