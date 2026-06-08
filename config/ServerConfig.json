@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "rookie_friendly": true,
+    "end_round_on_team_unbalance": 0.4,
+    "auto_team_balance": {
+      "enabled_after_seconds": 10,
+      "enabled_on_unbalance_amount": 2
+    }
+  },
+  "tags": [
+    "ns2",
+    "classic"
+  ]
+}

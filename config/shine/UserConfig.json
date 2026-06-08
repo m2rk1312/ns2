@@ -1,0 +1,30 @@
+{
+  "Groups": {
+    "owner": {
+      "Commands": [],
+      "Immunity": 100,
+      "IsBlacklist": true
+    },
+    "moderator": {
+      "Commands": [
+        "sh_kick",
+        "sh_ban",
+        "sh_changelevel",
+        "sh_cyclemap",
+        "sh_reset",
+        "sh_rr",
+        "sh_forcerandom",
+        "sh_say",
+        "sh_pm"
+      ],
+      "Immunity": 10,
+      "IsBlacklist": false
+    }
+  },
+  "Users": {},
+  "DefaultGroup": {
+    "Commands": [],
+    "Immunity": 0,
+    "IsBlacklist": false
+  }
+}
