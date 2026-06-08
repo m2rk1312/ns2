@@ -9,6 +9,22 @@ fail() {
   exit 1
 }
 
+require_uint() {
+  local name="$1"
+  local value="${!name}"
+  [[ "${value}" =~ ^[0-9]+$ ]] || fail "${name} must be numeric: ${value}"
+}
+
+require_range() {
+  local name="$1"
+  local min="$2"
+  local max="$3"
+  local value="${!name}"
+
+  require_uint "${name}"
+  (( 10#${value} >= min && 10#${value} <= max )) || fail "${name} must be between ${min} and ${max}: ${value}"
+}
+
 CONFIG_KEYS=(
   NS2_ROOT
   NS2_SERVERFILES
@@ -85,10 +101,14 @@ MAPCYCLE="${NS2_CONFIG_PATH}/MapCycle.json"
 for path in NS2_SERVERFILES NS2_CONFIG_PATH NS2_LOG_DIR NS2_WORKSHOP_DIR; do
   [[ "${!path}" == /* ]] || fail "${path} must be absolute: ${!path}"
 done
-for number in SERVER_PORT SERVER_LIMIT SERVER_SPEC_LIMIT WEB_PORT MOD_SERVER_PORT; do
-  [[ "${!number}" =~ ^[0-9]+$ ]] || fail "${number} must be numeric: ${!number}"
-done
+require_range SERVER_PORT 1 65535
+require_range WEB_PORT 1 65535
+require_range MOD_SERVER_PORT 1 65535
+require_range SERVER_LIMIT 1 64
+require_range SERVER_SPEC_LIMIT 0 64
 [[ "${WEB_ADMIN}" == 0 || "${WEB_ADMIN}" == 1 ]] || fail "WEB_ADMIN must be 0 or 1"
+[[ -n "${SERVER_NAME}" ]] || fail "SERVER_NAME must not be empty"
+[[ -n "${WEB_USER}" ]] || fail "WEB_USER must not be empty"
 [[ -r "${MAPCYCLE}" ]] || fail "Missing readable map cycle: ${MAPCYCLE}"
 
 if [[ "${PRINT}" == 0 ]]; then
@@ -103,11 +123,36 @@ import sys
 
 data = json.load(open(sys.argv[1], encoding="utf-8"))
 mods = data.get("mods")
-maps = [item.get("map") if isinstance(item, dict) else item for item in data.get("maps", [])]
-if not isinstance(mods, list) or not mods or any(not isinstance(mod, int) for mod in mods):
-    raise SystemExit("MapCycle.json mods must be a non-empty integer list")
+
+def require_mod_list(value, label, allow_empty=False):
+    if not isinstance(value, list) or (not value and not allow_empty):
+        raise SystemExit(f"{label} must be a {'possibly empty ' if allow_empty else 'non-empty '}integer list")
+    if any(not isinstance(mod, int) for mod in value):
+        raise SystemExit(f"{label} must contain only integer Workshop IDs")
+    if len(value) != len(set(value)):
+        raise SystemExit(f"{label} must not contain duplicate Workshop IDs")
+
+require_mod_list(mods, "MapCycle.json mods")
 if 2934445221 not in mods:
     raise SystemExit("MapCycle.json must include CBM Workshop ID 2934445221")
+
+maps = []
+for index, item in enumerate(data.get("maps", []), start=1):
+    if isinstance(item, str):
+        map_name = item
+    elif isinstance(item, dict):
+        map_name = item.get("map")
+        require_mod_list(item.get("mods", []), f"MapCycle.json maps[{index}].mods", allow_empty=True)
+    else:
+        raise SystemExit(f"MapCycle.json maps[{index}] must be a string or object")
+    if not isinstance(map_name, str) or not map_name:
+        raise SystemExit(f"MapCycle.json maps[{index}] must have a non-empty map name")
+    maps.append(map_name)
+
+if not maps:
+    raise SystemExit("MapCycle.json maps must not be empty")
+if len(maps) != len(set(maps)):
+    raise SystemExit("MapCycle.json maps must not contain duplicate map names")
 if sys.argv[2] not in maps:
     raise SystemExit(f"SERVER_START_MAP is not in MapCycle.json: {sys.argv[2]}")
 print(",".join(map(str, mods)))
@@ -115,7 +160,7 @@ PY
 )"
 
 if [[ "${WEB_ADMIN}" == 1 ]]; then
-  [[ "${WEB_PASSWORD}" != "change-this-password" && ${#WEB_PASSWORD} -ge 16 ]] || fail "Set WEB_PASSWORD to a non-default value with at least 16 characters, or set WEB_ADMIN=0."
+  [[ ${#WEB_PASSWORD} -ge 16 ]] || fail "Set WEB_PASSWORD to at least 16 characters, or set WEB_ADMIN=0."
   if [[ -f "${ROOT}/.env" ]]; then
     python3 -c 'import os,sys; raise SystemExit(1 if os.stat(sys.argv[1]).st_mode & 0o077 else 0)' "${ROOT}/.env" \
       || fail ".env must not be group/world readable when WEB_ADMIN=1. Run: chmod 600 .env"

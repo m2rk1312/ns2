@@ -8,7 +8,7 @@
   "GetUsersFromWeb": false,
   "GetUsersWithPOST": false,
   "UserRetrieveArguments": {},
-  "UsersURL": "http://www.yoursite.com/users.json",
+  "UsersURL": "",
   "RefreshUsers": false,
   "RefreshInterval": 60,
   "WebConfigs": {
