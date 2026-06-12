@@ -18,20 +18,6 @@ Natural Selection 2 dedicated-server config for the x76 EU server.
 - `.env.example` - host-specific launch values.
 - `scripts/start-linux.sh` - runtime launcher and config validation.
 
-## Server Profile
-
-- Players: 20.
-- Spectators: 5.
-- Reserved slots: 0.
-- Startup map: `ns2_biodome`.
-- Balance mod: BDT Community Balance Mod, Workshop `2934445221`.
-- Shine: Workshop `117887554`; built-in plugins are enabled in `config/shine/BaseConfig.json`.
-- NS2Panel: Workshop `2856795526`; config is `config/NS2Panel.json`.
-- Wonitor: Workshop `593421222`; config is `config/shine/plugins/wonitor.json`.
-- x76 EU reference: `https://ns2servers.pw/server/136.243.135.61:27015`
-
-`config/MapCycle.json` is the source of truth for mounted Workshop IDs. Steam downloads the current Workshop version for each listed ID.
-
 ## Host Setup
 
 Install Linux dependencies:
