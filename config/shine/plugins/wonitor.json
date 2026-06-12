@@ -1,0 +1,10 @@
+{
+  "ServerIdentifier": "ns2-cbm",
+  "WonitorURL": "http://localhost/wonitor/update.php",
+  "SendWonitorStats": true,
+  "SendNS2PlusStats": false,
+  "SendNS2PlusStatsKillFeed": false,
+  "ShowMenuEntry": true,
+  "MenuEntryName": "Wonitor",
+  "MenuEntryUrl": "http://localhost/wonitor/"
+}

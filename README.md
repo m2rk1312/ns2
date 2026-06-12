@@ -1,30 +1,40 @@
 # NS2 CBM Server
 
-Natural Selection 2 dedicated-server profile. BAD Classic public mod stack + CommunityBalanceMod.
+Natural Selection 2 dedicated-server config for the x76 EU server.
 
-- `config/MapCycle.json` - map pool, map-specific Workshop mods, startup Workshop mods.
-- `config/ServerConfig.json` - 20-player classic server settings.
+## Files
+
+- `config/MapCycle.json` - maps, map-specific Workshop mods, startup Workshop mods.
+- `config/ServerConfig.json` - server name, player limits, browser settings.
 - `config/ConsistencyConfig.json` - client consistency rules.
-- `config/shine/BaseConfig.json` - Shine enabled plugins.
-- `config/shine/UserConfig.json` - admins.
-- `config/shine/plugins/NS2Panel.json` - NS2Panel token config shape.
-- `.env.example` - host values.
-- `scripts/start-linux.sh` - only runtime script.
+- `config/shine/BaseConfig.json` - Shine enabled plugins and web config mapping.
+- `config/shine/UserConfig.json` - Shine admins and groups.
+- `config/shine/plugins/BaseCommands.json` - Shine base command settings.
+- `config/shine/plugins/WorkshopUpdater.json` - Shine Workshop update monitor.
+- `config/shine/plugins/switchteams.json` - [Shine] Switch Teams config.
+- `config/shine/plugins/wonitor.json` - Wonitor Shine plugin config.
+- `config/NS2Panel.json` - NS2Panel standalone mod config.
+- `docs/ADDON_DOCUMENTATION_LINKS.md` - documentation/source links for addons in this stack.
+- `.env.example` - host-specific launch values.
+- `scripts/start-linux.sh` - runtime launcher and config validation.
 
-## Profile
+## Server Profile
 
 - Players: 20.
 - Spectators: 5.
 - Reserved slots: 0.
 - Startup map: `ns2_biodome`.
-- Balance: CBM, not default NS2.
-- CBM Workshop ID: `2934445221`.
-- Startup mods: 21. First 20 = BAD Classic/Noob Haven public order. Last = CBM.
-- UWE whitelist/ranked status not copyable. Friends can play without it.
+- Balance mod: BDT Community Balance Mod, Workshop `2934445221`.
+- Shine: Workshop `117887554`; built-in plugins are enabled in `config/shine/BaseConfig.json`.
+- NS2Panel: Workshop `2856795526`; config is `config/NS2Panel.json`.
+- Wonitor: Workshop `593421222`; config is `config/shine/plugins/wonitor.json`.
+- x76 EU reference: `https://ns2servers.pw/server/136.243.135.61:27015`
 
-## Setup
+`config/MapCycle.json` is the source of truth for mounted Workshop IDs. Steam downloads the current Workshop version for each listed ID.
 
-Linux host deps:
+## Host Setup
+
+Install Linux dependencies:
 
 ```bash
 sudo dpkg --add-architecture i386
@@ -33,7 +43,7 @@ sudo apt-get update
 sudo apt-get install -y ca-certificates lib32gcc-s1 lib32stdc++6 python3 steamcmd
 ```
 
-User + dirs:
+Create the server user and directories:
 
 ```bash
 sudo groupadd --system ns2server || true
@@ -44,7 +54,7 @@ sudo install -d -o ns2server -g ns2server /home/ns2server/ns2/logs
 sudo install -d -o ns2server -g ns2server /home/ns2server/ns2/workshop
 ```
 
-Put this repo on host, then:
+Put this repo on the host, then set permissions:
 
 ```bash
 sudo chown -R root:ns2server .
@@ -53,24 +63,24 @@ sudo find . -type f -exec chmod 640 {} +
 sudo chmod 750 scripts/start-linux.sh
 sudo install -o ns2server -g ns2server -m 600 .env.example .env
 sudo install -d -o ns2server -g ns2server -m 750 config/shine/logs
-sudo chown ns2server:ns2server config/shine/plugins/NS2Panel.json
-sudo chmod 600 config/shine/plugins/NS2Panel.json
+sudo chown ns2server:ns2server config/NS2Panel.json config/shine/plugins/*.json
+sudo chmod 600 config/NS2Panel.json config/shine/plugins/*.json
 ```
 
 Edit `.env`:
 
-- `SERVER_NAME`
-- ports if needed
-- keep `WEB_ADMIN=0`, or set strong `WEB_PASSWORD` with at least 16 chars and restrict `8080/tcp` to your admin IP
+- Set `SERVER_NAME`.
+- Change ports only if the host needs it.
+- Keep `WEB_ADMIN=0`, or set a strong `WEB_PASSWORD` and restrict `8080/tcp` to your admin IP.
 
-Install/update NS2 dedicated server:
+Install or update the NS2 dedicated server:
 
 ```bash
 sudo -u ns2server steamcmd +force_install_dir /home/ns2server/ns2/serverfiles +login anonymous +app_update 4940 validate +quit
 sudo -u ns2server /home/ns2server/ns2/serverfiles/steam-runtime/setup.sh
 ```
 
-Open firewall:
+Open firewall ports:
 
 ```bash
 sudo ufw allow 27015/udp
@@ -84,23 +94,9 @@ Only if `WEB_ADMIN=1`:
 sudo ufw allow from YOUR_ADMIN_IP to any port 8080 proto tcp
 ```
 
-Check launch command:
+## Required Config
 
-```bash
-sudo -u ns2server ./scripts/start-linux.sh --print-command
-```
-
-Start:
-
-```bash
-sudo -u ns2server ./scripts/start-linux.sh
-```
-
-## Admins
-
-Edit `config/shine/UserConfig.json`.
-
-Add NS2 ID:
+Add admins in `config/shine/UserConfig.json`:
 
 ```json
 "Users": {
@@ -110,66 +106,83 @@ Add NS2 ID:
 }
 ```
 
-Use `owner` or `moderator`.
+Set `config/NS2Panel.json`:
 
-## NS2Panel
+- Create a token at `https://ns2panel.com/`.
+- Put it in `AuthToken`.
+- Keep the file private.
 
-Create token at `https://ns2panel.com/`, then edit `config/shine/plugins/NS2Panel.json`.
+Set `config/shine/plugins/wonitor.json` if Wonitor should report to a real web instance:
 
-Set `AuthToken` to token value. Keep file private.
+- `WonitorURL`: `http://YOUR_HOST/wonitor/update.php`
+- `MenuEntryUrl`: `http://YOUR_HOST/wonitor/`
+- `ServerIdentifier`: same value allowed by the Wonitor web config.
 
-After first start, join as Shine admin, open Shine admin menu, enable NS2Panel plugin permanently.
+The bundled default Wonitor URL is `http://localhost/wonitor/update.php`. The Wonitor Shine plugin uses HTTP.
 
-## Required Checks
+## Start
 
-Command output must contain:
+Print and validate the launch command:
+
+```bash
+sudo -u ns2server ./scripts/start-linux.sh --print-command
+```
+
+Start the server:
+
+```bash
+sudo -u ns2server ./scripts/start-linux.sh
+```
+
+`--print-command` allows an empty NS2Panel token so you can inspect the command. Real startup fails until `config/NS2Panel.json` has `AuthToken` set.
+
+## Verification
+
+The printed command must contain:
 
 - `-limit 20`
 - `-speclimit 5`
 - `-mods2`
 - `2934445221`
 
-Command output must not contain `-webpassword` unless `WEB_ADMIN=1`; printed password is redacted.
+The printed command must not contain `-webpassword` unless `WEB_ADMIN=1`; printed passwords are redacted.
 
-Quick local check:
-
-```bash
-./scripts/start-linux.sh --print-command
-```
-
-## Live Addon Checks
-
-After first Linux start, prove addons loaded:
+After first start, check the server logs:
 
 ```bash
-grep -iE 'workshop|mod|failed|error' /home/ns2server/ns2/logs/*.log
+! grep -iE 'failed|missing mod|error loading wonitor|HiveVision' /home/ns2server/ns2/logs/*.log
 ```
 
-No `failed` / missing mod errors.
+No matches should appear.
 
-Check public server page:
+Check the public listing:
 
 ```text
 https://ns2servers.pw/server/YOUR_IP:27015
 ```
 
-Mod list should show 21 running mods, including:
+It should show the x76 EU stack plus CBM, including:
 
+- `2934445221` BDT Community Balance Mod
+- `3558697165` UWE Hotfix 344
+- `117887554` Shine Administration
+- `593421222` Wonitor
 - `2856795526` NS2Panel
-- `2934445221` CBM
 
-Join server from NS2 client. If client joins without missing-mod errors, server is serving required Workshop addons.
-
-In server/client console, check:
+From the server or client console, run:
 
 ```text
 sh_listplugins
 ```
 
-Shine should be loaded. Enable NS2Panel permanently in Shine menu if needed.
+Expected Shine plugin entries include:
 
-Cycle one custom-map entry later to prove map-specific Workshop mods download:
+- `switchteams`
+- `wonitor`
+- `workshopupdater`
+- `votealltalk`
+- `votedraw`
+- `voterandom`
+- `votesurrender`
 
-```text
-sh_changelevel ns2_docking_mmpg
-```
+Join the server from an NS2 client. There should be no missing-mod error, no repeated `HiveVision_camera` error, and no stuck main-menu overlay during gameplay.

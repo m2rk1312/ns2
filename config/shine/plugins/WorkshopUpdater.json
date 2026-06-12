@@ -1,0 +1,8 @@
+{
+  "CheckInterval": 60,
+  "RepeatNotifications": true,
+  "NotifyInterval": 180,
+  "ForceMapChangeAfterNotifications": 5,
+  "ForceMapvote": false,
+  "ForceMapvoteAtRoundEnd": false
+}

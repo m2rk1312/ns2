@@ -117,11 +117,19 @@ if [[ "${PRINT}" == 0 ]]; then
 Install NS2 dedicated server files with SteamCMD, or set NS2_SERVERFILES in .env."
 fi
 
-MODS2="$(python3 - "${MAPCYCLE}" "${SERVER_START_MAP}" <<'PY'
+MODS2="$(python3 - "${MAPCYCLE}" "${SERVER_START_MAP}" "${PRINT}" <<'PY'
 import json
 import sys
+from pathlib import Path
 
-data = json.load(open(sys.argv[1], encoding="utf-8"))
+mapcycle_path = Path(sys.argv[1])
+print_only = sys.argv[3] == "1"
+
+def load_json(path):
+    with open(path, encoding="utf-8") as handle:
+        return json.load(handle)
+
+data = load_json(mapcycle_path)
 mods = data.get("mods")
 
 def require_mod_list(value, label, allow_empty=False):
@@ -135,6 +143,94 @@ def require_mod_list(value, label, allow_empty=False):
 require_mod_list(mods, "MapCycle.json mods")
 if 2934445221 not in mods:
     raise SystemExit("MapCycle.json must include CBM Workshop ID 2934445221")
+
+shine_mod_ids = {
+    1651491195: "[Shine] Switch Teams",
+    593421222: "[Shine] Wonitor",
+    208649136: "[Shine] Epsilon",
+    2608952840: "Devnull - [Shine] Extras",
+    2898899845: "[Shine]BAD",
+}
+shine_mod_present = 117887554 in mods
+if not shine_mod_present:
+    missing_shine_for = [name for mod_id, name in shine_mod_ids.items() if mod_id in mods]
+    if missing_shine_for:
+        raise SystemExit(
+            "Shine Workshop ID 117887554 is required by: " + ", ".join(missing_shine_for)
+        )
+
+active_extensions = {}
+if shine_mod_present:
+    shine_config_path = mapcycle_path.parent / "shine" / "BaseConfig.json"
+    if not shine_config_path.is_file():
+        raise SystemExit("Shine Workshop ID 117887554 requires config/shine/BaseConfig.json")
+
+    shine_config = load_json(shine_config_path)
+    active_extensions = shine_config.get("ActiveExtensions")
+    if not isinstance(active_extensions, dict):
+        raise SystemExit("BaseConfig.json ActiveExtensions must be an object")
+
+    web_configs = shine_config.get("WebConfigs", {})
+    if not isinstance(web_configs.get("Plugins", {}), dict):
+        raise SystemExit("BaseConfig.json WebConfigs.Plugins must be an object")
+
+    if 2856795526 in mods and active_extensions.get("ns2panel"):
+        raise SystemExit("Do not enable Epsilon ns2panel while the NS2Panel Workshop mod is mounted")
+
+    if 1651491195 in mods:
+        if active_extensions.get("switchteams") is not True:
+            raise SystemExit("[Shine] Switch Teams requires ActiveExtensions.switchteams=true")
+        switchteams_path = mapcycle_path.parent / "shine" / "plugins" / "switchteams.json"
+        if not switchteams_path.is_file():
+            raise SystemExit("[Shine] Switch Teams requires config/shine/plugins/switchteams.json")
+        switchteams = load_json(switchteams_path)
+        team_gap_limit = switchteams.get("teamgaplimit")
+        if not isinstance(team_gap_limit, int) or team_gap_limit < 1:
+            raise SystemExit("switchteams.json teamgaplimit must be a positive integer")
+
+    if active_extensions.get("workshopupdater"):
+        updater_path = mapcycle_path.parent / "shine" / "plugins" / "WorkshopUpdater.json"
+        if not updater_path.is_file():
+            raise SystemExit("Shine workshopupdater requires config/shine/plugins/WorkshopUpdater.json")
+
+    if 1132771326 in mods:
+        basecommands_path = mapcycle_path.parent / "shine" / "plugins" / "BaseCommands.json"
+        if not basecommands_path.is_file():
+            raise SystemExit("Enhanced Spectator requires config/shine/plugins/BaseCommands.json")
+        basecommands = load_json(basecommands_path)
+        if basecommands.get("AllTalkSpectator") is not True:
+            raise SystemExit("Enhanced Spectator requires BaseCommands.json AllTalkSpectator=true")
+
+if 593421222 in mods:
+    if active_extensions.get("wonitor") is not True:
+        raise SystemExit("[Shine] Wonitor requires ActiveExtensions.wonitor=true")
+    wonitor_config_path = mapcycle_path.parent / "shine" / "plugins" / "wonitor.json"
+    if not wonitor_config_path.is_file():
+        raise SystemExit("Wonitor Workshop ID 593421222 requires config/shine/plugins/wonitor.json")
+    wonitor = load_json(wonitor_config_path)
+    server_id = wonitor.get("ServerIdentifier")
+    wonitor_url = wonitor.get("WonitorURL")
+    if not isinstance(server_id, str) or not server_id:
+        raise SystemExit("wonitor.json must set non-empty ServerIdentifier")
+    if not isinstance(wonitor_url, str) or not wonitor_url.startswith("http://"):
+        raise SystemExit("wonitor.json must set WonitorURL to an http:// update.php endpoint")
+
+if 2856795526 in mods:
+    ns2panel_path = mapcycle_path.parent / "NS2Panel.json"
+    if not ns2panel_path.is_file():
+        raise SystemExit("NS2Panel Workshop ID 2856795526 requires config/NS2Panel.json")
+    ns2panel = load_json(ns2panel_path)
+    if not isinstance(ns2panel.get("PlayerConnectReport"), dict):
+        raise SystemExit("NS2Panel.json must include PlayerConnectReport")
+    if not isinstance(ns2panel.get("RoundEndReport"), dict):
+        raise SystemExit("NS2Panel.json must include RoundEndReport")
+    if not isinstance(ns2panel.get("PlayerSkillReport"), dict):
+        raise SystemExit("NS2Panel.json must include PlayerSkillReport")
+    auth_token = ns2panel.get("AuthToken")
+    if not isinstance(auth_token, str):
+        raise SystemExit("NS2Panel.json AuthToken must be a string")
+    if not print_only and not auth_token:
+        raise SystemExit("Set config/NS2Panel.json AuthToken before starting with NS2Panel enabled")
 
 maps = []
 for index, item in enumerate(data.get("maps", []), start=1):

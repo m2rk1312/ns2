@@ -8,5 +8,10 @@
     "MaxSubmitRetries": 3,
     "SubmitTimeout": 5
   },
-  "__Version": "1.0"
+  "PlayerSkillReport": {
+    "Enabled": true,
+    "MaxSubmitRetries": 1,
+    "SubmitTimeout": 5
+  },
+  "__Version": "1.1"
 }

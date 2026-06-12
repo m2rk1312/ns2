@@ -19,7 +19,7 @@
     "UpdateMode": 1,
     "UpdateInterval": 1,
     "IsBlacklist": false,
-    "Plugins": []
+    "Plugins": {}
   },
   "ActiveExtensions": {
     "adverts": false,
@@ -40,15 +40,17 @@
     "reservedslots": false,
     "roundlimiter": false,
     "serverswitch": false,
+    "switchteams": true,
     "tournamentmode": false,
     "unstuck": true,
     "usermanagement": true,
-    "votealltalk": false,
-    "votedraw": false,
-    "voterandom": false,
+    "votealltalk": true,
+    "votedraw": true,
+    "voterandom": true,
     "votesurrender": true,
     "welcomemessages": false,
-    "workshopupdater": false
+    "wonitor": true,
+    "workshopupdater": true
   },
   "APIKeys": {
     "Steam": ""

@@ -1,6 +1,6 @@
 {
   "settings": {
-    "rookie_friendly": true,
+    "rookie_friendly": false,
     "end_round_on_team_unbalance": 0.4,
     "auto_team_balance": {
       "enabled_after_seconds": 10,
