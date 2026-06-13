@@ -12,7 +12,6 @@ Natural Selection 2 dedicated-server config for the x76 EU server.
 - `config/shine/plugins/BaseCommands.json` - Shine base command settings.
 - `config/shine/plugins/WorkshopUpdater.json` - Shine Workshop update monitor.
 - `config/shine/plugins/switchteams.json` - [Shine] Switch Teams config.
-- `config/shine/plugins/wonitor.json` - Wonitor Shine plugin config.
 - `config/NS2Panel.json` - NS2Panel standalone mod config.
 - `docs/ADDON_DOCUMENTATION_LINKS.md` - documentation/source links for addons in this stack.
 - `.env.example` - host-specific launch values.
@@ -40,7 +39,7 @@ Required Pelican variables:
 - `WEB_PASSWORD`: blank when `WEB_ADMIN=0`
 - `WEB_PORT`: unused when `WEB_ADMIN=0`
 - `EXTRA_PARAMS`: blank
-- `WORKSHOP_MODS`: `2899635443,3558697165,2606061626,191973881,117887554,1651491195,593421222,208649136,1132771326,2569595369,2491326908,2658159429,2597529958,2608952840,2856795526,2891240122,2898899845,2895891999,2886849901,2934445221`
+- `WORKSHOP_MODS`: `2899635443,3558697165,2606061626,191973881,117887554,1651491195,208649136,1132771326,2569595369,2491326908,2658159429,2597529958,2608952840,2856795526,2891240122,2895891999,2886849901,2934445221`
 
 Pelican network allocations:
 
@@ -129,14 +128,6 @@ Set `config/NS2Panel.json`:
 - Put it in `AuthToken`.
 - Keep the file private.
 
-Set `config/shine/plugins/wonitor.json` if Wonitor should report to a real web instance:
-
-- `WonitorURL`: `http://YOUR_HOST/wonitor/update.php`
-- `MenuEntryUrl`: `http://YOUR_HOST/wonitor/`
-- `ServerIdentifier`: same value allowed by the Wonitor web config.
-
-The bundled default Wonitor URL is `http://localhost/wonitor/update.php`. The Wonitor Shine plugin uses HTTP.
-
 ## Start
 
 Print and validate the launch command:
@@ -167,7 +158,7 @@ The printed command must not contain `-webpassword` unless `WEB_ADMIN=1`; printe
 After first start, check the server logs:
 
 ```bash
-! grep -iE 'failed|missing mod|error loading wonitor|HiveVision' /home/ns2server/ns2/logs/*.log
+! grep -iE 'failed|missing mod|HiveVision' /home/ns2server/ns2/logs/*.log
 ```
 
 No matches should appear.
@@ -183,7 +174,6 @@ It should show the x76 EU stack plus CBM, including:
 - `2934445221` BDT Community Balance Mod
 - `3558697165` UWE Hotfix 344
 - `117887554` Shine Administration
-- `593421222` Wonitor
 - `2856795526` NS2Panel
 
 From the server or client console, run:
@@ -195,7 +185,6 @@ sh_listplugins
 Expected Shine plugin entries include:
 
 - `switchteams`
-- `wonitor`
 - `workshopupdater`
 - `votealltalk`
 - `votedraw`

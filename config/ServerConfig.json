@@ -1,14 +1,36 @@
 {
-  "settings": {
-    "rookie_friendly": true,
-    "end_round_on_team_unbalance": 0.4,
-    "auto_team_balance": {
-      "enabled_after_seconds": 10,
-      "enabled_on_unbalance_amount": 2
-    }
-  },
   "tags": [
     "ns2",
-    "classic"
-  ]
+    "x76"
+  ],
+  "settings": {
+    "alltalk": false,
+    "pregamealltalk": false,
+    "consistency_enabled": true,
+    "use_own_consistency_config": true,
+    "jit_maxmcode": 35000,
+    "jit_maxtrace": 20000,
+    "mod_backup_servers": [],
+    "mod_backup_before_steam": false,
+    "dyndns": "",
+    "enabledyndns": false,
+    "rookie_friendly": true,
+    "rookie_only": false,
+    "rookie_only_bots": 12,
+    "filler_bots": 12,
+    "force_even_teams_on_join": true,
+    "auto_team_balance": {
+      "enabled": true,
+      "enabled_on_unbalance_amount": 2,
+      "enabled_after_seconds": 10
+    },
+    "end_round_on_team_unbalance": 0.4,
+    "end_round_on_team_unbalance_check_after_time": 300,
+    "end_round_on_team_unbalance_after_warning_time": 30,
+    "quickplay_ready": true,
+    "season": "",
+    "season_month": 0,
+    "max_http_requests": 8,
+    "hiveranking": true
+  }
 }

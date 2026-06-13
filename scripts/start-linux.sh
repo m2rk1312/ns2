@@ -149,7 +149,6 @@ shine_mod_ids = {
     593421222: "[Shine] Wonitor",
     208649136: "[Shine] Epsilon",
     2608952840: "Devnull - [Shine] Extras",
-    2898899845: "[Shine]BAD",
 }
 shine_mod_present = 117887554 in mods
 if not shine_mod_present:

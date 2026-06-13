@@ -19,7 +19,6 @@ This is the link inventory used for the NS2 x76 EU + CBM server setup. If an add
 | `191973881` | Badges+ | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=191973881; Source: https://github.com/GhoulofGSG9/BadgesPlus; Shine Badges docs: https://github.com/Person8880/Shine/wiki/Badges; Legacy badge assignment page: https://steamcommunity.com/sharedfiles/filedetails/?id=124034170 |
 | `117887554` | Shine Administration | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=117887554; Wiki: https://github.com/Person8880/Shine/wiki; Source: https://github.com/Person8880/Shine; Changelog: https://github.com/Person8880/Shine/wiki/Changelog |
 | `1651491195` | [Shine] Switch Teams | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=1651491195; Workshop Lua payload inspected: https://cdn.steamusercontent.com/ugc/951852874825584603/ABF54828BF6A7BE12888EEAFA74F714F255FF7F8/ |
-| `593421222` | [Shine] Wonitor | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=593421222; Source/docs: https://github.com/eBrute/wonitor; Workshop Lua payload inspected: https://cdn.steamusercontent.com/ugc/852722829040721386/97F3496ABDC3F5A2F195285EC93F6DBF77B03F3D/ |
 | `208649136` | [Shine] Epsilon | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=208649136; Source: https://github.com/GhoulofGSG9/Shine-Epsilon; Wiki: https://github.com/GhoulofGSG9/Shine-Epsilon/wiki |
 | `1132771326` | Enhanced Spectator | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=1132771326; Shine `AllTalkSpectator` docs: https://github.com/Person8880/Shine/wiki/Base-Commands |
 | `2569595369` | Devnull - Fair Start | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=2569595369 |
@@ -29,7 +28,6 @@ This is the link inventory used for the NS2 x76 EU + CBM server setup. If an add
 | `2608952840` | Devnull - [Shine] Extras | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=2608952840 |
 | `2856795526` | NS2Panel | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=2856795526; Website: https://ns2panel.com/; Register: https://ns2panel.com/register; Profile: https://ns2panel.com/user/profile; API tokens: https://ns2panel.com/user/api-tokens; Epsilon NS2Panel source schema cross-check: https://github.com/GhoulofGSG9/Shine-Epsilon/blob/master/lua/shine/extensions/ns2panel.lua |
 | `2891240122` | BlueprintObstacleFix | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=2891240122 |
-| `2898899845` | [Shine]BAD | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=2898899845 |
 | `2895891999` | Drey's Enhanced Hud | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=2895891999 |
 | `2874307238` | Drey's Improved Blueprint Placement | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=2874307238 |
 | `2886849901` | InfantryPortal | Steam: https://steamcommunity.com/sharedfiles/filedetails/?id=2886849901 |
