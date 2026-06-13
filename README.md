@@ -18,6 +18,37 @@ Natural Selection 2 dedicated-server config for the x76 EU server.
 - `.env.example` - host-specific launch values.
 - `scripts/start-linux.sh` - runtime launcher and config validation.
 
+## Pelican Setup
+
+Use these container paths:
+
+- Config path: `/home/container/config`
+- Workshop storage: `/home/container/workshop`
+- Log dir: `/home/container/logs`
+- Server binary: `x64/server_linux`
+
+Required Pelican variables:
+
+- `SERVER_BINARY`: `x64/server_linux`
+- `SERVER_SERVER_PORT`: `27017`
+- `SERVER_NAME`: `<x76>EU Server (smurfs allowed)`
+- `MAX_PLAYERS`: `20`
+- `SPEC_LIMIT`: `5`
+- `STARTUP_MAP`: `ns2_biodome`
+- `WEB_ADMIN`: `0`
+- `WEB_USER`: `admin`
+- `WEB_PASSWORD`: blank when `WEB_ADMIN=0`
+- `WEB_PORT`: unused when `WEB_ADMIN=0`
+- `EXTRA_PARAMS`: blank
+- `WORKSHOP_MODS`: `2899635443,3558697165,2606061626,191973881,117887554,1651491195,593421222,208649136,1132771326,2569595369,2491326908,2658159429,2597529958,2608952840,2856795526,2891240122,2898899845,2895891999,2886849901,2934445221`
+
+Pelican network allocations:
+
+- Primary allocation: `SERVER_SERVER_PORT` for UDP game traffic and TCP mod-server traffic.
+- Port `27017`: primary allocation.
+- Port `27018`: additional allocation for the NS2 Steam query port.
+- Only add a web-admin allocation when `WEB_ADMIN=1`.
+
 ## Host Setup
 
 Install Linux dependencies:
